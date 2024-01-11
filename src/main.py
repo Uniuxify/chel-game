@@ -2,6 +2,10 @@ import pygame
 import sys
 import os
 from os import path
+import man
+
+from src.core.game_object import GameObject, State
+from src.core.animation import Animation
 
 pygame.init()
 SCREEN = pygame.display.set_mode((1000, 800))
@@ -21,6 +25,7 @@ SOUNDS = {
 class Game:
     def __init__(self):
         self.man = Man()
+        self.man2 = man.Man((200, 200))
 
     def start(self):
         while True:
@@ -31,19 +36,31 @@ class Game:
                     if event.key == pygame.K_LEFT:
                         self.man.change_state(ManStates.RUNNING)
                         self.man.change_dir(ManDir.LEFT)
+
+                        self.man2.change_state(man.RunningState(self.man2))
                     elif event.key == pygame.K_RIGHT:
                         self.man.change_state(ManStates.RUNNING)
                         self.man.change_dir(ManDir.RIGHT)
+
+                        self.man2.change_state(man.RunningState(self.man2))
                     elif event.key == pygame.K_SPACE:
                         self.man.change_state(ManStates.JUMPING)
+
+                        self.man2.change_state(man.JumpingState(self.man2))
                     elif event.key == pygame.K_1:
                         self.man.change_state(ManStates.DUDKA)
+
+                        self.man2.change_state(man.DudkaState(self.man2))
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT and self.man.man_dir == ManDir.LEFT:
                         self.man.change_state(ManStates.STAYING)
+
+                        self.man2.change_state(man.StayingState(self.man2))
                     elif event.key == pygame.K_RIGHT and self.man.man_dir == ManDir.RIGHT:
                         self.man.change_state(ManStates.STAYING)
+
+                        self.man2.change_state(man.StayingState(self.man2))
 
             if self.man.curr_state == ManStates.RUNNING:
                 self.man.move()
@@ -56,6 +73,7 @@ class Game:
     def draw_scene(self):
         SCREEN.fill((255, 255, 255))
         self.man.draw(show_hitboxes=True)
+        self.man2.render(SCREEN)
 
         pygame.display.update()
 
