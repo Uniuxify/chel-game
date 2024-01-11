@@ -1,6 +1,5 @@
-from core.game_object import State, create_hitbox, GameObject
+from core.game_object import State, GameObject
 from core.animation import Animation, Frame, AnimationEvents
-from core.geometry import list_of_points
 from os import path
 import pygame
 

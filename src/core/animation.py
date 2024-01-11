@@ -92,7 +92,6 @@ class Animation:
 
     def __next__(self) -> Frame:
         frame = self.frames[self.curr_frame]
-        print(self.curr_frame)
         if self.paused or self.is_ended:
             return frame
 

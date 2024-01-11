@@ -1,7 +1,7 @@
 import pygame
 from src.core.conv_types import tPoint, tSurface, to_point
 from typing import Union
-from src.core.animation import Animation, AnimationEvents
+from src.core.animation import Animation
 from src.core.geometry import Point
 
 

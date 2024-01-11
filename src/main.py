@@ -72,7 +72,7 @@ class Game:
 
     def draw_scene(self):
         SCREEN.fill((255, 255, 255))
-        self.man.draw(show_hitboxes=True)
+        self.man.draw(show_hitboxes=False)
         self.man2.render(SCREEN)
 
         pygame.display.update()
@@ -221,9 +221,9 @@ class Man:
                 for hitbox in self.staying_hitboxes[self.curr_frame]:
 
                     pygame.draw.rect(SCREEN, (255, 0, 0), hitbox.move(self.x, self.y), 0)
-
-        for piv in self.p:
-            pygame.draw.circle(SCREEN, (0, 255, 0), (piv[0] + self.x, piv[1] + self.y), 1)
+        
+            for piv in self.p:
+                pygame.draw.circle(SCREEN, (0, 255, 0), (piv[0] + self.x, piv[1] + self.y), 1)
         self.curr_frame += 1
         self.curr_frame %= len(frames)
 
