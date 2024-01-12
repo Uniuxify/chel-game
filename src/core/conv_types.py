@@ -4,6 +4,7 @@ import pygame
 
 tPoint = Union[tuple[float, float], geom.Point]
 tSurface = Union[pygame.Surface, pygame.SurfaceType]
+tSound = pygame.mixer.Sound
 
 
 def to_point(point: tPoint) -> geom.Point:

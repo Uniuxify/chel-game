@@ -37,33 +37,38 @@ class Game:
                         self.man.change_state(ManStates.RUNNING)
                         self.man.change_dir(ManDir.LEFT)
 
-                        self.man2.change_state(man.RunningState(self.man2))
+                        self.man2.change_state(man.Man.STATES.RUNNING)
+                        self.man2.change_facing('left')
+
                     elif event.key == pygame.K_RIGHT:
                         self.man.change_state(ManStates.RUNNING)
                         self.man.change_dir(ManDir.RIGHT)
 
-                        self.man2.change_state(man.RunningState(self.man2))
+                        self.man2.change_state(man.Man.STATES.RUNNING)
+                        self.man2.change_facing('right')
+
                     elif event.key == pygame.K_SPACE:
                         self.man.change_state(ManStates.JUMPING)
 
-                        self.man2.change_state(man.JumpingState(self.man2))
+                        self.man2.change_state(man.Man.STATES.JUMPING)
                     elif event.key == pygame.K_1:
                         self.man.change_state(ManStates.DUDKA)
 
-                        self.man2.change_state(man.DudkaState(self.man2))
+                        self.man2.change_state(man.Man.STATES.DUDKA)
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT and self.man.man_dir == ManDir.LEFT:
                         self.man.change_state(ManStates.STAYING)
 
-                        self.man2.change_state(man.StayingState(self.man2))
+                        self.man2.change_state(man.Man.STATES.STAYING)
                     elif event.key == pygame.K_RIGHT and self.man.man_dir == ManDir.RIGHT:
                         self.man.change_state(ManStates.STAYING)
 
-                        self.man2.change_state(man.StayingState(self.man2))
+                        self.man2.change_state(man.Man.STATES.STAYING)
 
             if self.man.curr_state == ManStates.RUNNING:
                 self.man.move()
+                self.man2.move()
 
             self.draw_scene()
             self.man.play_sounds()
@@ -72,7 +77,7 @@ class Game:
 
     def draw_scene(self):
         SCREEN.fill((255, 255, 255))
-        self.man.draw(show_hitboxes=False)
+        # self.man.draw(show_hitboxes=False)
         self.man2.render(SCREEN)
 
         pygame.display.update()
@@ -221,7 +226,7 @@ class Man:
                 for hitbox in self.staying_hitboxes[self.curr_frame]:
 
                     pygame.draw.rect(SCREEN, (255, 0, 0), hitbox.move(self.x, self.y), 0)
-        
+
             for piv in self.p:
                 pygame.draw.circle(SCREEN, (0, 255, 0), (piv[0] + self.x, piv[1] + self.y), 1)
         self.curr_frame += 1

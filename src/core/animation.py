@@ -1,5 +1,7 @@
 from typing import List, Literal
-from src.core.conv_types import tSurface
+from src.core.conv_types import tSurface, tSound
+
+import pygame
 
 from src.core.geometry import Point
 import enum
@@ -8,12 +10,26 @@ from collections import defaultdict
 
 
 class Frame:
-    def __init__(self, image: tSurface, pivots: List[Point] = None):
+    def __init__(self, image: tSurface, sound: tSound = None, pivots: List[Point] = None):
         self.image = image
         self.pivots = pivots
+        self.sound = sound
+
+        self.height = self.image.get_height()
+        self.width = self.image.get_width()
 
     def render(self, screen, pos):
         screen.blit(self.image, pos)
+        if self.sound:
+            self.sound.play()
+
+    def flip(self, flip_x=True, flip_y=True):
+        self.image = pygame.transform.flip(self.image, flip_x, flip_y)
+        if self.pivots:
+            new_pivots = [Point(self.width - pivot.x if flip_x else pivot.x,
+                                self.height - pivot.x if flip_y else pivot.y)
+                          for pivot in self.pivots]
+            self.pivots = new_pivots
 
 
 class FramesOrder(enum.Enum):
@@ -121,8 +137,18 @@ class Animation:
             self.event_manager.notify(AnimationEvents.animation_ended)
         return frame
 
+    def next_frame(self) -> Frame:
+        return next(self)
+
     def n_frames(self):
         return len(self.frames)
+
+    def flip_frames(self, flip_x=True, flip_y=True):
+        for frame in self.frames:
+            frame.flip(flip_x, flip_y)
+
+    def add_sound(self, i_frame, sound: tSound):
+        self.frames[i_frame].sound = sound
 
     def pause(self):
         self.paused = True
