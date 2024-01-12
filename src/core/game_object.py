@@ -90,7 +90,8 @@ class GameObject:
     def __init__(self, name: str, pos: tPoint, states_dict, curr_state):
         self.name = name
         self.states_dict = states_dict
-        self.state = states_dict[curr_state]
+        self.curr_state = curr_state
+        self.state = states_dict[self.curr_state]
 
         self.pos = to_point(pos)
 
@@ -101,8 +102,8 @@ class GameObject:
                 hit_box.render(screen)
 
     def change_state(self, man_state):
-
-        self.state = self.states_dict[man_state]
+        self.curr_state = man_state
+        self.state = self.states_dict[self.curr_state]
         self.state.animation.reset()
 
     def shift(self, x, y):
