@@ -8,7 +8,7 @@ ROOT_PATH = r'../'
 pygame.init()
 
 
-def load_animation(entity_name, state_name):
+def load_animation(entity_name: str, state_name: str):
     with open(ANIMATION_JSON) as f:
         animation_json = json.load(f)['Animations']
 
@@ -26,7 +26,7 @@ def load_animation(entity_name, state_name):
                             frame.add_sound(pygame.mixer.Sound(path.join(ROOT_PATH, sound_fp)))
                         frames.append(frame)
 
-                    return Animation(tuple(frames), frames_order=state_anim['frames_order'], loop=state_anim['loop'])
+                    return Animation(frames, frames_order=state_anim['frames_order'], loop=state_anim['loop'])
 
 
 if __name__ == '__main__':

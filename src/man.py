@@ -8,7 +8,7 @@ import core.loader as loader
 
 
 class RunningState(State):
-    def __init__(self, game_object):
+    def __init__(self, game_object: GameObject):
         name = 'running'
         animation = loader.load_animation('chel', name)
 
@@ -16,7 +16,7 @@ class RunningState(State):
 
 
 class StayingState(State):
-    def __init__(self, game_object):
+    def __init__(self, game_object: GameObject):
         name = 'staying'
         animation = loader.load_animation('chel', name)
 
@@ -24,7 +24,7 @@ class StayingState(State):
 
 
 class DudkaState(State):
-    def __init__(self, game_object):
+    def __init__(self, game_object: GameObject):
         name = 'dudka'
         animation = loader.load_animation('chel', name)
         animation.event_manager.subscribe(AnimationEvents.animation_ended,

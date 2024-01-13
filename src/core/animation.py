@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import Literal
 from src.core.conv_types import tSurface, tSound
 
 import pygame
@@ -10,7 +10,7 @@ from collections import defaultdict
 
 
 class Frame:
-    def __init__(self, image: tSurface, sounds: List[tSound] = None, pivots: List[Point] = None):
+    def __init__(self, image: tSurface, sounds: list[tSound] = None, pivots: list[Point] = None):
         self.image = image
         self.pivots = pivots
         self.sounds = sounds if sounds is not None else []
@@ -67,7 +67,7 @@ class AnimationEvents(enum.Enum):
 
 
 class Animation:
-    def __init__(self, frames: tuple[Frame, ...],  # TODO: Добавить проверку того, что все кадры одинакового размер
+    def __init__(self, frames: list[Frame],  # TODO: Добавить проверку того, что все кадры одинакового размер
                  on_animation_end=None,
                  frames_order: Literal['default', 'reverse', 'forth-and-back', 'back-and-forth'] = 'default',
                  # frames_order=FramesOrder.default,
@@ -105,9 +105,9 @@ class Animation:
         elif self.frames_order == FramesOrder.reverse.value:
             return iter(reversed(self.frames))
         elif self.frames_order == FramesOrder.back_and_forth.value:
-            return iter(tuple(reversed(self.frames)) + self.frames)
+            return iter(list(reversed(self.frames)) + self.frames)
         elif self.frames_order == FramesOrder.forth_and_back.value:
-            return iter(self.frames + tuple(reversed(self.frames)))
+            return iter(self.frames + list(reversed(self.frames)))
 
     def __next__(self) -> Frame:
         frame = self.frames[self.curr_frame]

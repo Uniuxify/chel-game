@@ -54,7 +54,7 @@ class HitBox:
 
         return cls(frame.image.get_width(), frame.image.get_height(), rectangles)
 
-    def __init__(self, orig_width, orig_height, rectangles: list[pygame.Rect, ...], ):
+    def __init__(self, orig_width, orig_height, rectangles: list[pygame.Rect], ):
         self.rectangles = rectangles
         self.orig_width = orig_width
         self.orig_height = orig_height
@@ -76,7 +76,7 @@ class HitBox:
 
 
 class State:
-    def __init__(self, name, game_object, animation: Animation, hit_boxes: Union[list[HitBox, ...], None] = None):
+    def __init__(self, name, game_object, animation: Animation, hit_boxes: Union[list[HitBox], None] = None):
         if hit_boxes:
             if len(hit_boxes) != animation.n_frames():
                 raise ValueError(f'hit_boxes and animation must have same length ({len(hit_boxes)} != {animation.n_frames()})')
