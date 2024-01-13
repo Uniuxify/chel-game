@@ -10,18 +10,18 @@ from collections import defaultdict
 
 
 class Frame:
-    def __init__(self, image: tSurface, sound: tSound = None, pivots: List[Point] = None):
+    def __init__(self, image: tSurface, sounds: List[tSound] = None, pivots: List[Point] = None):
         self.image = image
         self.pivots = pivots
-        self.sound = sound
+        self.sounds = sounds if sounds is not None else []
 
         self.height = self.image.get_height()
         self.width = self.image.get_width()
 
     def render(self, screen, pos):
         screen.blit(self.image, pos)
-        if self.sound:
-            self.sound.play()
+        for sound in self.sounds:
+            sound.play()
 
     def flip(self, flip_x=True, flip_y=True):
         self.image = pygame.transform.flip(self.image, flip_x, flip_y)
@@ -30,6 +30,9 @@ class Frame:
                                 self.height - pivot.x if flip_y else pivot.y)
                           for pivot in self.pivots]
             self.pivots = new_pivots
+
+    def add_sound(self, sound: tSound):
+        self.sounds.append(sound)
 
 
 class FramesOrder(enum.Enum):
@@ -133,7 +136,6 @@ class Animation:
         if self.loops_left == 0:
             self.loops_left = self.loop
             self.is_ended = True
-
             self.event_manager.notify(AnimationEvents.animation_ended)
         return frame
 
@@ -148,7 +150,7 @@ class Animation:
             frame.flip(flip_x, flip_y)
 
     def add_sound(self, i_frame, sound: tSound):
-        self.frames[i_frame].sound = sound
+        self.frames[i_frame].add_sound(sound)
 
     def pause(self):
         self.paused = True

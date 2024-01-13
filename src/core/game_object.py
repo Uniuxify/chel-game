@@ -101,8 +101,8 @@ class GameObject:
             for hit_box in self.state.hit_boxes:
                 hit_box.render(screen)
 
-    def change_state(self, man_state):
-        self.curr_state = man_state
+    def change_state(self, state):
+        self.curr_state = state
         self.state = self.states_dict[self.curr_state]
         self.state.animation.reset()
 
