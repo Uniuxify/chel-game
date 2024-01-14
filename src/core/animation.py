@@ -18,8 +18,11 @@ class Frame:
         self.height = self.image.get_height()
         self.width = self.image.get_width()
 
-    def render(self, screen, pos):
+    def render(self, screen, pos, show_pivots=False):
         screen.blit(self.image, pos)
+        if show_pivots:
+            for piv in self.pivots:
+                pygame.draw.circle(screen, (0, 255, 0), (piv.x + pos[0], piv.y + pos[1]), 1)
         for sound in self.sounds:
             sound.play()
 
@@ -83,9 +86,11 @@ class Animation:
         self.frames_order = frames_order
 
         if self.frames_order in (FramesOrder.reverse.value, FramesOrder.back_and_forth.value):
-            self.curr_frame = self.last_frame()
+            self.frame_to_draw = self.last_frame()
         else:
-            self.curr_frame = 0
+            self.frame_to_draw = 0
+
+        self.curr_frame = self.frame_to_draw
 
         self.loops_left = loop
         self.loop = loop
@@ -109,37 +114,38 @@ class Animation:
         elif self.frames_order == FramesOrder.forth_and_back.value:
             return iter(self.frames + list(reversed(self.frames)))
 
-    def __next__(self) -> Frame:
-        frame = self.frames[self.curr_frame]
+    def __next__(self) -> tuple[int, Frame]:
+        frame = self.frames[self.frame_to_draw]
+        self.curr_frame = self.frame_to_draw
         if self.paused or self.is_ended:
-            return frame
+            return self.curr_frame, frame
 
-        self.curr_frame += self.step
-        if self.curr_frame == self.last_frame() + 1:
+        self.frame_to_draw += self.step
+        if self.frame_to_draw == self.last_frame() + 1:
             if self.frames_order == FramesOrder.default.value or self.frames_order == FramesOrder.back_and_forth.value:
-                self.curr_frame = 0
+                self.frame_to_draw = 0
                 self.loops_left -= 1
                 self.event_manager.notify(AnimationEvents.new_loop)
             if self.frames_order == FramesOrder.forth_and_back.value or self.frames_order == FramesOrder.back_and_forth.value:
                 self.step *= -1
-                self.curr_frame += self.step
+                self.frame_to_draw += self.step
 
-        elif self.curr_frame == -1:
+        elif self.frame_to_draw == -1:
             if self.frames_order == FramesOrder.reverse.value or self.frames_order == FramesOrder.forth_and_back.value:
                 self.loops_left -= 1
                 self.event_manager.notify(AnimationEvents.new_loop)
-                self.curr_frame = self.last_frame()
+                self.frame_to_draw = self.last_frame()
             if self.frames_order == FramesOrder.back_and_forth.value or self.frames_order == FramesOrder.forth_and_back.value:
                 self.step *= -1
-                self.curr_frame += self.step
+                self.frame_to_draw += self.step
 
         if self.loops_left == 0:
             self.loops_left = self.loop
             self.is_ended = True
             self.event_manager.notify(AnimationEvents.animation_ended)
-        return frame
+        return self.curr_frame, frame
 
-    def next_frame(self) -> Frame:
+    def next_frame(self) -> tuple[int, Frame]:
         return next(self)
 
     def n_frames(self):
@@ -163,9 +169,10 @@ class Animation:
         self.is_ended = False
         self.loops_left = self.loop
         if self.frames_order in (FramesOrder.reverse.value, FramesOrder.back_and_forth.value):
-            self.curr_frame = self.last_frame()
+            self.frame_to_draw = self.last_frame()
         else:
-            self.curr_frame = 0
+            self.frame_to_draw = 0
+        self.curr_frame = self.frame_to_draw
 
     def last_frame(self):
         return len(self.frames) - 1

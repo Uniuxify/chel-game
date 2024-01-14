@@ -50,7 +50,7 @@ class Game:
 
     def draw_scene(self):
         SCREEN.fill((255, 255, 255))
-        self.man.render(SCREEN)
+        self.man.render(SCREEN, show_hit_boxes=True)
 
         pygame.display.update()
 

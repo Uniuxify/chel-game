@@ -2,6 +2,7 @@ import json
 import pygame
 from src.core.animation import Animation, Frame
 from os import path
+from src.core import geometry
 
 ANIMATION_JSON = r'..\res\Animations.json'
 ROOT_PATH = r'../'
@@ -21,7 +22,10 @@ def load_animation(entity_name: str, state_name: str):
                     frames = []
                     for frame_json in state_anim['frames']:
                         img = pygame.image.load(path.join(ROOT_PATH, state_anim['frames_directory'], frame_json['file_name']))
-                        frame = Frame(img)
+                        pivots_x = frame_json['pivots_x']
+                        pivots_y = frame_json['pivots_y']
+                        pivots = geometry.list_of_points(pivots_x, pivots_y)
+                        frame = Frame(img, pivots=pivots)
                         for sound_fp in frame_json['sound_files']:
                             frame.add_sound(pygame.mixer.Sound(path.join(ROOT_PATH, sound_fp)))
                         frames.append(frame)
