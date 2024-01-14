@@ -1,4 +1,6 @@
 import pygame
+import sys
+
 from src.core.conv_types import tPoint, tSurface, to_point
 from src.core.animation import Animation, Frame
 from src.core.geometry import Point
@@ -106,12 +108,12 @@ class GameObject:
 
         self.pos = to_point(pos)
 
-    def render(self, screen: tSurface, show_hit_boxes=False):
+    def render(self, screen: tSurface, show_hit_boxes=False, show_pivots=False):
         # TODO: Эта строчка нужна, т.к. состояние может измениться в процессе получения кадра (AnimationEvents.animation_ended).
         #  Это плохо, надо потом исправить. Анимация заканчивается не после получения последнего кадра, а после его отрисовки
         state = self.state
         frame_ind, frame_to_draw = self.state.animation.next_frame()
-        frame_to_draw.render(screen, self.pos.as_tuple(), show_pivots=True)
+        frame_to_draw.render(screen, self.pos.as_tuple(), show_pivots=show_pivots)
         if show_hit_boxes:
             state.hit_boxes[frame_ind].render(screen, self.pos)
 
@@ -135,3 +137,59 @@ class GameObject:
 
     def flip_vertically(self):
         self.flip(flip_x=False, flip_y=True)
+
+
+class Scene:
+    def __init__(self, game):
+        self.game_objects = []
+        self.game = game
+
+    def update(self):
+        """Updates inner state of all objects on scene"""
+        pass
+
+    def render(self, screen):
+        """Renders all objects on scene"""
+        screen.fill((255, 255, 255))
+        for obj in self.game_objects:
+            obj.render(screen)
+
+    def add_object(self, obj: GameObject):
+        self.game_objects.append(obj)
+
+
+class Game:
+    def __init__(self, game_name: str, icon_fp: str):
+        self.scene = None
+        self.game_name = game_name
+        self.fps_clock = pygame.time.Clock()
+        self.fps = 5
+
+        pygame.init()
+        pygame.display.set_caption(self.game_name)
+
+        icon_img = pygame.image.load(icon_fp)
+        pygame.display.set_icon(icon_img)
+
+        self.screen = pygame.display.set_mode((1000, 800))
+        self.screen.fill((255, 255, 255))
+
+    def set_scene(self, scene: Scene):
+        self.scene = scene
+
+    def start(self):
+        """Starts game loop"""
+        while True:
+            self.scene.update()
+            self.scene.render(self.screen)
+
+            self.fps_clock.tick(self.fps)
+            pygame.display.update()
+
+    def end(self):
+        pygame.quit()
+        sys.exit()
+
+
+
+

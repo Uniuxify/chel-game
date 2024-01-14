@@ -1,6 +1,6 @@
 import enum
 
-from core.game_object import State, GameObject
+from core.game import State, GameObject
 from src.core.animation import AnimationEvents  # TODO: Not working without 'src.' for some reason. Investigate later. (Probably enum comparison problem)
 
 from core.conv_types import tPoint
@@ -37,11 +37,6 @@ class JumpingState(State):
     def __init__(self, game_object):
         name = 'jumping'
         animation = loader.load_animation('chel', name)
-
-        # hit_box = create_hitbox(list_of_points(
-        #     list_x=,
-        #     list_y=
-        # ))
 
         super().__init__(name, game_object, animation)
         self.animation.event_manager.subscribe(AnimationEvents.animation_ended,
