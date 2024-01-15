@@ -72,6 +72,9 @@ class HitBox:
         self.orig_width = orig_width
         self.orig_height = orig_height
         self.mime_box = None
+        self._update_mime_box()
+
+    def _update_mime_box(self):
         if self.rectangles:
             first_rect = self.rectangles[0]
             min_x = first_rect.x
@@ -102,6 +105,13 @@ class HitBox:
             new_y = self.orig_height - rect.y - rect.height if flip_y else rect.y
             flipped.append(pygame.Rect(new_x, new_y, rect.width, rect.height))
         self.rectangles = flipped
+
+    def scale(self, scale):
+        self.orig_width *= scale
+        self.orig_height *= scale
+        for rect in self.rectangles:
+            rect.update(rect.x * scale, rect.y * scale, rect.w * scale, rect.h * scale)
+        self._update_mime_box()
 
     def is_collide(self, other):
         pass
@@ -160,6 +170,13 @@ class GameObject:
 
     def flip_vertically(self):
         self.flip(flip_x=False, flip_y=True)
+
+    def scale(self, scale):
+        for state in self.states_dict.values():
+            state.animation.scale_frames(scale)
+            if state.hit_boxes:
+                for hit_box in state.hit_boxes:
+                    hit_box.scale(scale)
 
 
 class Scene:

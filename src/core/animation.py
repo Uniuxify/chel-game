@@ -34,6 +34,12 @@ class Frame:
                           for pivot in self.pivots]
             self.pivots = new_pivots
 
+    def scale(self, scale):
+        self.image = pygame.transform.smoothscale(self.image, (self.width * scale, self.height * scale))
+        if self.pivots:
+            new_pivots = [Point(pivot.x * scale, pivot.y * scale) for pivot in self.pivots]
+            self.pivots = new_pivots
+
     def add_sound(self, sound: tSound):
         self.sounds.append(sound)
 
@@ -154,6 +160,10 @@ class Animation:
     def flip_frames(self, flip_x=True, flip_y=True):
         for frame in self.frames:
             frame.flip(flip_x, flip_y)
+
+    def scale_frames(self, scale):
+        for frame in self.frames:
+            frame.scale(scale)
 
     def add_sound(self, i_frame, sound: tSound):
         self.frames[i_frame].add_sound(sound)

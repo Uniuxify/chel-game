@@ -42,6 +42,7 @@ class EmptyScene(Scene):
 
 def main():
     man = Man(Point(100, 100))
+    man.scale(0.4)
 
     game = Game('Чел', abspath('../res/icon.png'))
     empty_scene = EmptyScene(man, game)
