@@ -56,6 +56,10 @@ class HitBox:
             rectangles.append(rect)
         return cls(frame.image.get_width(), frame.image.get_height(), rectangles)
 
+    @classmethod
+    def from_rect(cls, rect: pygame.Rect):
+        return cls(rect.width, rect.height, [rect])
+
     @staticmethod
     def from_frames(frames: list[Frame]):
         hit_boxes = []
@@ -67,10 +71,29 @@ class HitBox:
         self.rectangles = rectangles
         self.orig_width = orig_width
         self.orig_height = orig_height
+        self.mime_box = None
+        if self.rectangles:
+            first_rect = self.rectangles[0]
+            min_x = first_rect.x
+            min_y = first_rect.y
+            max_x = first_rect.x + first_rect.width
+            max_y = first_rect.y + first_rect.height
+            for rect in self.rectangles:
+                min_x = min(min_x, rect.x)
+                min_y = min(min_y, rect.y)
+
+                max_x = max(max_x, rect.x + rect.width)
+                max_y = max(max_y, rect.y + rect.height)
+            x, y = min_x, min_y
+            w, h = max_x - x, max_y - y
+            self.mime_box = pygame.Rect(x, y, w, h)
 
     def render(self, screen: tSurface, pos: Point):
         for rect in self.rectangles:
             pygame.draw.rect(screen, random_color(), rect.move(pos.x, pos.y), width=3)
+
+        if self.mime_box:
+            pygame.draw.rect(screen, (255, 0, 0), self.mime_box.move(pos.x, pos.y), width=3)
 
     def flip(self, flip_x=True, flip_y=True):
         flipped = []
@@ -148,11 +171,11 @@ class Scene:
         """Updates inner state of all objects on scene"""
         pass
 
-    def render(self, screen):
+    def render(self, screen, show_hit_boxes=False):
         """Renders all objects on scene"""
         screen.fill((255, 255, 255))
         for obj in self.game_objects:
-            obj.render(screen)
+            obj.render(screen, show_hit_boxes)
 
     def add_object(self, obj: GameObject):
         self.game_objects.append(obj)
@@ -181,7 +204,7 @@ class Game:
         """Starts game loop"""
         while True:
             self.scene.update()
-            self.scene.render(self.screen)
+            self.scene.render(self.screen, show_hit_boxes=True)
 
             self.fps_clock.tick(self.fps)
             pygame.display.update()
