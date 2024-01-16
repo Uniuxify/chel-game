@@ -4,6 +4,7 @@ import sys
 from src.core.conv_types import tPoint, tSurface, to_point
 from src.core.animation import Animation, Frame
 from src.core.geometry import Point
+from src.core.physics import Gravity
 from src.core.utils import random_color
 
 
@@ -180,13 +181,23 @@ class GameObject:
 
 
 class Scene:
-    def __init__(self, game):
+    def __init__(self, game, gravity: Gravity = Gravity(g=30)):
         self.game_objects = []
         self.game = game
+        self.gravity = gravity
+
+    def _update(self):
+        """Updates inner state of all objects on scene"""
+        for obj in self.game_objects:
+            self.gravity.apply(obj)
+
+    def scene_update(self):
+        """Updates inner state of all objects on scene. Scene specific updates"""
+        raise NotImplementedError
 
     def update(self):
-        """Updates inner state of all objects on scene"""
-        pass
+        self._update()
+        self.scene_update()
 
     def render(self, screen, show_hit_boxes=False):
         """Renders all objects on scene"""

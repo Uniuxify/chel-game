@@ -12,7 +12,7 @@ class EmptyScene(Scene):
         self.man = man
         self.add_object(man)
 
-    def update(self):
+    def scene_update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.game.end()
